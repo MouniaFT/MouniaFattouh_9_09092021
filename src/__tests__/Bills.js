@@ -20,6 +20,7 @@ const billsContainer = new Bills({
 })
 
 beforeEach(() => {
+  // Définir l'utilisateur
   Object.defineProperty(window, 'localStorage', { value: localStorageMock })
         window.localStorage.setItem('user', JSON.stringify({
           type: 'Employee'
@@ -43,15 +44,13 @@ describe("Given I am connected as an employee", () => {
   })
   describe("When I am on Bills Page", () => {
     test("Then bill icon in vertical layout should be highlighted", () => {
+      // Modifier la méthode bills de firestore qui bloque le test
       Firestore.bills = () => ({ bills, get: jest.fn().mockResolvedValue() })
-      // // Définir l'utilisateur 
-      // Object.defineProperty(window, 'localStorage', { value: localStorageMock })
-      //   window.localStorage.setItem('user', JSON.stringify({
-      //     type: 'Employee'
-      // }))
+      // Définir la page
       Object.defineProperty(window, 'location', { value: { hash: ROUTES_PATH['Bills']} })
 
       document.body.innerHTML = `<div id="root"></div>`
+      // Lancer le Router car c'est lui qui ajoute ou supprime la class active-icon
       Router()
 
       const billIcon = screen.getByTestId("icon-window")
