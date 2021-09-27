@@ -3,11 +3,12 @@ import userEvent from '@testing-library/user-event'
 import BillsUI from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"
 import { localStorageMock } from "../__mocks__/localStorage.js"
-import LoadingPage from "../views/LoadingPage.js"
-import ErrorPage from "../views/ErrorPage.js"
 import Bills from "../containers/Bills.js"
-import { ROUTES } from "../constants/routes"
+import { ROUTES, ROUTES_PATH } from "../constants/routes"
 import firebase from "../__mocks__/firebase"
+import Router from "../app/Router"
+import Firestore from "../app/Firestore"
+
 
 const onNavigate = (pathname) => {
   document.body.innerHTML = ROUTES({ pathname })
@@ -26,27 +27,35 @@ beforeEach(() => {
 })
 
 describe("Given I am connected as an employee", () => {
-  describe("When loading" , () => {
-    test("Then when loading is true, LoadingPage should be called", () => {
-      const loading = true
-      const result = BillsUI({ data: bills, loading})
-
-      expect(result).toEqual(LoadingPage())
+  describe("When I am on bills page but it is loading" , () => {
+    test("Then, Loading page should be rendered", () => {
+      const html = BillsUI({ loading: true })
+      document.body.innerHTML = html
+      expect(screen.getAllByText('Loading...')).toBeTruthy()
     })
-    test("Then when loading is false and error is true, ErrorPage should be called", () => {
-      const loading = false
-      const error = true
-      const result = BillsUI({ data: bills, loading, error})
-
-      expect(result).toEqual(ErrorPage(error))
+  })
+  describe("When I am on bills page but back-end send an error message", () => {
+    test("Then, Error page should be rendered", () => {
+      const html = BillsUI({ error: "error message" })
+      document.body.innerHTML = html
+      expect(screen.getAllByText('Erreur')).toBeTruthy()
     })
   })
   describe("When I am on Bills Page", () => {
     test("Then bill icon in vertical layout should be highlighted", () => {
-      const html = BillsUI({ data: []})
-      document.body.innerHTML = html
+      Firestore.bills = () => ({ bills, get: jest.fn().mockResolvedValue() })
+      // // Définir l'utilisateur 
+      // Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      //   window.localStorage.setItem('user', JSON.stringify({
+      //     type: 'Employee'
+      // }))
+      Object.defineProperty(window, 'location', { value: { hash: ROUTES_PATH['Bills']} })
+
+      document.body.innerHTML = `<div id="root"></div>`
+      Router()
+
       const billIcon = screen.getByTestId("icon-window")
-      expect(billIcon.classList.contains("active-icon")).toBeTruthy
+      expect(billIcon.classList.contains("active-icon")).toBeTruthy()
     })
     test("Then bills should be ordered from earliest to latest", () => {
       const html = BillsUI({ data: bills })

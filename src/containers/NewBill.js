@@ -17,7 +17,6 @@ export default class NewBill {
   }
   handleChangeFile = e => {
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
-    console.log(file)
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
     if (this.firestore) {
