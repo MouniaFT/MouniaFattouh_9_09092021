@@ -68,7 +68,7 @@ describe("Given I am connected as an employee", () => {
         eyeIcon.addEventListener("click", handleClickIconEye(eyeIcon))
         userEvent.click(eyeIcon)
         expect(handleClickIconEye).toHaveBeenCalled()
-        expect(screen.getByTestId("modaleFile")).toBeTruthy
+        expect(screen.getByTestId("modaleFile")).toBeDefined()
       })
     })
     describe("When I click on buttonNewBill", () => {

@@ -27,7 +27,7 @@ describe("Given I am connected as an employee", () => {
       expect(screen.getAllByText("Envoyer une note de frais")).toBeTruthy
     })
   })
-  describe("when I click on button choose file and I add it", async() => {
+  describe("when I click on button choose file and I add it", () => {
     test("Then the file should be loaded", () => {
       const newBillsContainer = new NewBill({
         document, onNavigate, firestore: null, localStorage: window.localStorage
